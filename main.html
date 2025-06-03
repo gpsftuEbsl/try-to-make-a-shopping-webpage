@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>terry 品牌服飾</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #0077cc;
+    }
+    .products, .cart {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px #ccc;
+    }
+    .product {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    button {
+      background-color: #0077cc;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .cart-total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+    }
+    .order-btn {
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background: #28a745;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>terry 品牌服飾</h1>
+
+  <div class="products">
+    <h2>商品列表</h2>
+    <div class="product" data-id="1" data-name="Terry 經典T恤" data-price="500">
+      <div>
+        <strong>Terry 經典T恤</strong><br />
+        價格：NT$500
+      </div>
+      <button class="add-to-cart-btn">加入購物車</button>
+    </div>
+    <div class="product" data-id="2" data-name="Terry 帽T" data-price="1200">
+      <div>
+        <strong>Terry 帽T</strong><br />
+        價格：NT$1200
+      </div>
+      <button class="add-to-cart-btn">加入購物車</button>
+    </div>
+    <div class="product" data-id="3" data-name="Terry 牛仔褲" data-price="1800">
+      <div>
+        <strong>Terry 牛仔褲</strong><br />
+        價格：NT$1800
+      </div>
+      <button class="add-to-cart-btn">加入購物車</button>
+    </div>
+  </div>
+
+  <div class="cart">
+    <h2>購物車</h2>
+    <div id="cart-items">購物車是空的</div>
+    <div class="cart-total" id="cart-total"></div>
+    <button class="order-btn" id="order-btn" disabled>送出訂單</button>
+  </div>
+
+<script>
+  const cart = {};
+  const cartItemsDiv = document.getElementById('cart-items');
+  const cartTotalDiv = document.getElementById('cart-total');
+  const orderBtn = document.getElementById('order-btn');
+
+  function updateCartUI() {
+    const keys = Object.keys(cart);
+    if (keys.length === 0) {
+      cartItemsDiv.textContent = '購物車是空的';
+      cartTotalDiv.textContent = '';
+      orderBtn.disabled = true;
+      return;
+    }
+
+    cartItemsDiv.innerHTML = '';
+    let total = 0;
+    keys.forEach(id => {
+      const item = cart[id];
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'cart-item';
+      itemDiv.textContent = `${item.name} x ${item.quantity} - NT$${item.price * item.quantity}`;
+      cartItemsDiv.appendChild(itemDiv);
+      total += item.price * item.quantity;
+    });
+    cartTotalDiv.textContent = `總計：NT$${total}`;
+    orderBtn.disabled = false;
+  }
+
+  document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const productDiv = e.target.closest('.product');
+      const id = productDiv.dataset.id;
+      const name = productDiv.dataset.name;
+      const price = parseInt(productDiv.dataset.price, 10);
+
+      if (!cart[id]) {
+        cart[id] = { name, price, quantity: 1 };
+      } else {
+        cart[id].quantity++;
+      }
+
+      updateCartUI();
+    });
+  });
+
+  orderBtn.addEventListener('click', () => {
+    if (Object.keys(cart).length === 0) return;
+
+    alert('訂單已送出！\n感謝購買 Terry 品牌服飾！');
+    // 清空購物車
+    for (const key in cart) delete cart[key];
+    updateCartUI();
+  });
+
+  updateCartUI();
+</script>
+
+</body>
+</html>
